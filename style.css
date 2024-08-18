@@ -50,6 +50,12 @@ header p {
   display: none;
 }
 
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+  color: #333;
+}
+
 /* Style pour la gestion des catégories (page d'accueil) */
 #add-category {
   margin: 2rem;

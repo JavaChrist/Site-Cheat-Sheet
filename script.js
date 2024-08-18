@@ -41,7 +41,7 @@ let data = {
 // Fonction pour gérer l'ajout de contenu à la catégorie et sa sauvegarde dans localStorage
 function handleContentFormSubmit() {
     const contentForm = document.getElementById('content-form');
-    if (contentForm) { // Vérifie que le formulaire existe (pour éviter les erreurs sur la page d'accueil)
+    if (contentForm) {
         contentForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -109,8 +109,6 @@ function addContentToPage(content, index) {
     const contentElement = document.getElementById('content');
     if (contentElement) {
         contentElement.appendChild(section);
-    } else {
-        console.error("Erreur : L'élément avec l'ID 'content' est introuvable dans le DOM.");
     }
 
     Prism.highlightAll();
@@ -147,8 +145,6 @@ function refreshContent() {
     if (contentElement) {
         contentElement.innerHTML = '';
         loadSavedContent();
-    } else {
-        console.error("Erreur : L'élément avec l'ID 'content' est introuvable dans le DOM.");
     }
 }
 
@@ -161,7 +157,13 @@ function loadSavedContent() {
     }
 }
 
-// Fonction pour effectuer une recherche globale
+// Fonction pour mettre en évidence les mots pertinents dans les résultats de recherche
+function highlightText(text, query) {
+    if (!query) return text; // Si la requête est vide, retourne le texte tel quel
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+}
+
 function performSearch(query) {
     const resultsContainer = document.getElementById('results-container');
     resultsContainer.innerHTML = ''; // Vider les résultats précédents
@@ -187,13 +189,16 @@ function performSearch(query) {
                 categoryTitle.textContent = `Catégorie : ${category.name}`;
 
                 const contentTitle = document.createElement('h4');
-                contentTitle.textContent = content.title;
+                contentTitle.innerHTML = highlightText(content.title, query); // Applique la coloration sur le titre
 
                 const contentDescription = document.createElement('p');
-                contentDescription.textContent = content.description;
+                contentDescription.innerHTML = highlightText(content.description, query); // Applique la coloration sur la description
 
                 const pre = document.createElement('pre');
                 const codeElement = document.createElement('code');
+
+                // Applique la coloration sur le code
+                codeElement.innerHTML = highlightText(content.code, query);
 
                 if (category.id === "javascript") {
                     codeElement.classList.add('language-js');
@@ -203,7 +208,6 @@ function performSearch(query) {
                     codeElement.classList.add('language-html');
                 }
 
-                codeElement.textContent = content.code;
                 pre.appendChild(codeElement);
 
                 resultItem.appendChild(categoryTitle);
@@ -359,7 +363,6 @@ function importData(event) {
                 alert("Importation réussie !");
                 refreshContent();
             } catch (error) {
-                console.error("Erreur lors de l'importation :", error);
                 alert(`Erreur lors de l'importation des données : ${error.message}`);
             }
         };
