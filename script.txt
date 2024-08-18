@@ -49,19 +49,28 @@ function handleContentFormSubmit() {
             const description = document.getElementById('description').value.trim();
             const code = document.getElementById('code').value.trim();
 
+            // Créer un objet pour le nouveau contenu
             const newContent = {
                 title: title,
                 description: description,
                 code: code
             };
 
+            // Récupérer les données existantes dans localStorage
             const categoryId = document.body.getAttribute('data-category-id');
             let storedContent = JSON.parse(localStorage.getItem(`${categoryId}Content`)) || [];
             storedContent.push(newContent);
 
+            // Mettre à jour le localStorage
             localStorage.setItem(`${categoryId}Content`, JSON.stringify(storedContent));
+
+            // Afficher le nouveau contenu
             addContentToPage(newContent, storedContent.length - 1);
+
+            // Réinitialiser le formulaire
             contentForm.reset();
+
+            // Appliquer Prism.js à nouveau pour le nouveau contenu
             Prism.highlightAll();
         });
     }
@@ -75,21 +84,23 @@ function addContentToPage(content, index) {
     const p = document.createElement('p');
     p.textContent = content.description;
 
+    // Ajouter le bloc de code avec la bonne classe de coloration syntaxique
     const pre = document.createElement('pre');
     const codeElement = document.createElement('code');
 
     const categoryId = document.body.getAttribute('data-category-id');
     if (categoryId === "javascript") {
-        codeElement.classList.add('language-js');
+        codeElement.classList.add('language-js'); // Classe pour JavaScript
     } else if (categoryId === "css") {
-        codeElement.classList.add('language-css');
+        codeElement.classList.add('language-css'); // Classe pour CSS
     } else {
-        codeElement.classList.add('language-html');
+        codeElement.classList.add('language-html'); // Par défaut, classe pour HTML
     }
 
     codeElement.textContent = content.code;
     pre.appendChild(codeElement);
 
+    // Ajouter les boutons "Modifier" et "Supprimer"
     const editButton = document.createElement('button');
     editButton.textContent = "Modifier";
     editButton.classList.add('edit-button');
@@ -106,13 +117,10 @@ function addContentToPage(content, index) {
     section.appendChild(editButton);
     section.appendChild(deleteButton);
 
-    const contentElement = document.getElementById('content');
-    if (contentElement) {
-        contentElement.appendChild(section);
-    } else {
-        console.error("Erreur : L'élément avec l'ID 'content' est introuvable dans le DOM.");
-    }
+    // Ajouter la section au contenu affiché
+    document.getElementById('content').appendChild(section);
 
+    // Appliquer Prism.js pour colorer le code dynamique
     Prism.highlightAll();
 }
 
@@ -121,13 +129,17 @@ function editContent(index) {
     const categoryId = document.body.getAttribute('data-category-id');
     let storedContent = JSON.parse(localStorage.getItem(`${categoryId}Content`)) || [];
 
+    // Charger les données dans le formulaire pour les modifier
     const contentToEdit = storedContent[index];
     document.getElementById('title').value = contentToEdit.title;
     document.getElementById('description').value = contentToEdit.description;
     document.getElementById('code').value = contentToEdit.code;
 
+    // Supprimer l'ancien contenu
     storedContent.splice(index, 1);
     localStorage.setItem(`${categoryId}Content`, JSON.stringify(storedContent));
+
+    // Réafficher les contenus mis à jour
     refreshContent();
 }
 
@@ -136,20 +148,18 @@ function deleteContent(index) {
     const categoryId = document.body.getAttribute('data-category-id');
     let storedContent = JSON.parse(localStorage.getItem(`${categoryId}Content`)) || [];
 
+    // Supprimer l'élément à l'index donné
     storedContent.splice(index, 1);
     localStorage.setItem(`${categoryId}Content`, JSON.stringify(storedContent));
+
+    // Réafficher les contenus mis à jour
     refreshContent();
 }
 
 // Fonction pour rafraîchir l'affichage des contenus
 function refreshContent() {
-    const contentElement = document.getElementById('content');
-    if (contentElement) {
-        contentElement.innerHTML = '';
-        loadSavedContent();
-    } else {
-        console.error("Erreur : L'élément avec l'ID 'content' est introuvable dans le DOM.");
-    }
+    document.getElementById('content').innerHTML = ''; // Vider le contenu affiché
+    loadSavedContent(); // Recharger les contenus depuis le localStorage
 }
 
 // Charger les données sauvegardées depuis localStorage au chargement de la page
@@ -247,19 +257,21 @@ function initializeSearch() {
                 }
             }
         });
+    } else {
+
     }
 }
 
 // Initialisation de la page des catégories
 function initializePage() {
-    loadSavedContent();
-    handleContentFormSubmit();
+    loadSavedContent(); // Charger le contenu sauvegardé
+    handleContentFormSubmit(); // Gérer la soumission du formulaire
 }
 
 // Générer les liens pour chaque catégorie sur la page d'accueil avec logos
 function generateCategoryLinks() {
     const categoryMenu = document.getElementById('category-menu');
-    if (categoryMenu) {
+    if (categoryMenu) { // Vérifie si l'élément existe avant de le manipuler
         categoryMenu.innerHTML = '';
 
         data.categories.forEach(category => {
@@ -284,19 +296,22 @@ function generateCategoryLinks() {
 // Gérer la soumission du formulaire pour ajouter une nouvelle catégorie
 function handleCategoryFormSubmit() {
     const categoryForm = document.getElementById('category-form');
-    if (categoryForm) {
+    if (categoryForm) { // Vérifie que le formulaire existe (pour éviter les erreurs sur les pages de catégories)
         categoryForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const newCategoryName = document.getElementById('new-category-name').value.trim();
+
             if (newCategoryName) {
                 const newCategoryId = newCategoryName.toLowerCase().replace(/\s+/g, '-');
                 const newCategoryPage = `${newCategoryId}.html`;
 
+                // Vérifier si l'ID existe déjà
                 if (!data.categories.find(cat => cat.id === newCategoryId)) {
                     const className = newCategoryId;
                     const logo = prompt("Entrez l'URL du logo pour cette catégorie (par exemple, un lien vers une image SVG) :");
 
+                    // Ajouter la nouvelle catégorie
                     data.categories.push({
                         id: newCategoryId,
                         name: newCategoryName,
@@ -305,7 +320,10 @@ function handleCategoryFormSubmit() {
                         className: className
                     });
 
+                    // Rafraîchir les liens des catégories
                     generateCategoryLinks();
+
+                    // Réinitialiser le formulaire
                     categoryForm.reset();
                 } else {
                     alert('Une catégorie avec ce nom existe déjà.');
@@ -315,76 +333,15 @@ function handleCategoryFormSubmit() {
     }
 }
 
-// Fonction pour exporter les données
-function exportData() {
-    const allData = {};
-
-    // Récupérer les données de chaque catégorie
-    data.categories.forEach(category => {
-        const storedContent = JSON.parse(localStorage.getItem(`${category.id}Content`)) || [];
-        allData[category.id] = storedContent;
-    });
-
-    // Convertir les données en JSON et créer un fichier téléchargeable
-    const dataStr = JSON.stringify(allData, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    // Créer un lien pour télécharger le fichier
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = "pense-bete-donnees.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-// Fonction pour importer les données
-function importData(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-
-                if (!importedData || typeof importedData !== 'object') {
-                    throw new Error("La structure JSON n'est pas valide.");
-                }
-
-                Object.keys(importedData).forEach(categoryId => {
-                    localStorage.setItem(`${categoryId}Content`, JSON.stringify(importedData[categoryId]));
-                });
-
-                alert("Importation réussie !");
-                refreshContent();
-            } catch (error) {
-                console.error("Erreur lors de l'importation :", error);
-                alert(`Erreur lors de l'importation des données : ${error.message}`);
-            }
-        };
-        reader.readAsText(file);
-    }
-}
-
 // Initialisation globale
 function initializeApp() {
-    generateCategoryLinks();
-    handleCategoryFormSubmit();
-    initializeSearch(); // Ajouter la fonction de recherche ici
+    generateCategoryLinks(); // Générer les catégories
+    handleCategoryFormSubmit(); // Gérer le formulaire de catégories
+    initializeSearch(); // Initialiser la recherche
 }
 
-// Initialisation au chargement du DOM
+// Appeler l'initialisation des pages spécifiques et de l'accueil après le chargement du DOM
 document.addEventListener('DOMContentLoaded', function () {
     initializePage();
     initializeApp();
-
-    // Gérer l'importation et l'exportation
-    document.getElementById('import-button').addEventListener('click', () => {
-        document.getElementById('import-file-input').click();
-    });
-
-    document.getElementById('import-file-input').addEventListener('change', importData);
-
-    document.getElementById('export-button').addEventListener('click', exportData);
 });

@@ -20,6 +20,36 @@ header p {
   color: #ccc;
 }
 
+/* Styles pour les boutons d'import/export */
+#import-export-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#import-export-buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+#import-export-buttons button:hover {
+  background-color: #0056b3;
+}
+
+#import-export-buttons button:active {
+  background-color: #003f7f;
+}
+
+#import-export-buttons input[type="file"] {
+  display: none;
+}
+
 /* Style pour la gestion des catégories (page d'accueil) */
 #add-category {
   margin: 2rem;
