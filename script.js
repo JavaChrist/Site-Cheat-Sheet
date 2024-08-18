@@ -4,29 +4,36 @@ let data = {
             id: "html",
             name: "HTML",
             page: "html.html",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg",
+            logo: "/images/html-5.png",
             className: "html"
         },
         {
             id: "css",
             name: "CSS",
             page: "css.html",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg",
+            logo: "/images/icone-css3.png",
             className: "css"
         },
         {
             id: "javascript",
             name: "JavaScript",
             page: "javascript.html",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png",
+            logo: "/images/javascript.png",
             className: "javascript"
         },
         {
             id: "react",
             name: "React",
             page: "react.html",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
+            logo: "/images/icone-react.png",
             className: "react"
+        },
+        {
+            id: "github",
+            name: "Github",
+            page: "github.html",
+            logo: "/images/github.png",
+            className: "github"
         }
     ]
 };
@@ -233,22 +240,26 @@ function initializeSearch() {
     const searchButton = document.getElementById('search-button');
     const searchInput = document.getElementById('search-input');
 
-    searchButton.addEventListener('click', function () {
-        const query = searchInput.value.trim();
-        if (query) {
-            performSearch(query);
-        }
-    });
-
-    searchInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', function () {
             const query = searchInput.value.trim();
             if (query) {
                 performSearch(query);
             }
-        }
-    });
+        });
+
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    performSearch(query);
+                }
+            }
+        });
+    } else {
+
+    }
 }
 
 // Initialisation de la page des catégories
@@ -329,6 +340,8 @@ function initializeApp() {
     initializeSearch(); // Initialiser la recherche
 }
 
-// Appeler l'initialisation des pages spécifiques et de l'accueil
-initializePage();
-initializeApp();
+// Appeler l'initialisation des pages spécifiques et de l'accueil après le chargement du DOM
+document.addEventListener('DOMContentLoaded', function () {
+    initializePage();
+    initializeApp();
+});

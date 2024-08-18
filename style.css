@@ -100,21 +100,25 @@ header p {
 
 /* Couleurs spécifiques pour chaque catégorie */
 .category-card.html {
-  background-color: #e34c26;
+  background-color: #e34c26aa;
   color: white;
 }
 
 .category-card.css {
-  background-color: #264de4;
+  background-color: #264ce4b2;
   color: white;
 }
 
 .category-card.javascript {
-  background-color: #f7df1e;
+  background-color: #f7de1ea9;
   color: white;
 }
 .category-card.react {
   background-color: #61dcfb81;
+  color: white;
+}
+.category-card.github {
+  background-color: #000405c6;
   color: white;
 }
 
